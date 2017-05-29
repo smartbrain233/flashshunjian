@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+		body,div,ul,li,span,a,img{ margin:0; padding: 0; }
+		li{ list-style: none; }
+		img{ border: 0 none; vertical-align: top; }
+		a{ text-decoration: none; color: #fff; }
+		body{ font-size: 14px; font-family: "微软雅黑"; }
+		.slider{position: relative; width: 560px; height: 305px; margin: 0 auto; overflow: hidden; }
+		.slider-img,.slider-img li,.slider-img img{ width: 100%; height: 100%; }
+		.slider-img li{ position: relative; z-index: 88; }
+		.slider-img span{ position: absolute; left: 0; bottom: 0; width: 550px; height: 32px; padding: 33px 0 0 10px; background: url(img/shadow.png) no-repeat -10px -11px;}
+		.slider-btn{ position: absolute; left: 0; bottom: 0; z-index: 90; width: 537px; height: 25px; padding-right: 23px; text-align: right;}
+		.slider-btn span{ display: inline-block; width: 10px; height: 10px;   margin-left: 2px; vertical-align: top; cursor: pointer;/*鼠标变手指*/}
+		.slider-btn i{ display: block; width: 8px; height: 8px; background: #878d97; border-radius: 50%; margin-top: 1px;}
+		.slider-btn .current i{width: 100%; height: 100%; background: #4372c1; margin-top: 0px;}
+		.slider-left,.slider-right{ position: absolute; top: 118px; z-index: 99; width: 50px; height: 50px; border-radius: 50%; transition: background 0.5s; background: url(img/shadow.png) no-repeat\9;}
+		.slider-left{ background-position: -10px -96px\9; }
+		.slider-right{ background-position: -160px -96px\9; }
+		.slider-left:before,.slider-left:after,.slider-right:before,.slider-right:after{ content: ""; position: absolute; left:16px; ; width: 4px; height: 20px; background: #fff;  transform-origin: 0 100%; transition: transform 0.5s,background 0.5s; display: none\9;}
+		.slider-right:before,.slider-right:after{ right: 16px; left: auto; }
+		.slider-left:before{top: 6px; transform: rotate(30deg); transform-origin: 0 100%;}
+		.slider-left:after{top: 26px; transform: rotate(-30deg); transform-origin: 0 0;}
+		.slider-right:before{top: 6px; transform: rotate(-30deg);  transform-origin: 100% 100%;}
+		.slider-right:after{top: 26px; transform: rotate(30deg); transform-origin: 100% 0;}
+		.slider-left:hover:before{transform: rotate(45deg); background: #f00;}
+		.slider-left:hover:after{transform: rotate(-45deg); background: #f00;}
+		.slider-right:hover:before{transform: rotate(-45deg);background: #f00;}
+		.slider-right:hover:after{transform: rotate(45deg); background: #f00;}
+		.slider-left:hover,.slider-right:hover{ background-color: #fff; background-color: transparent\9;}
+		.slider-left:hover{  background-position: -110px -96px; }
+		.slider-right:hover{ background-position: -60px -96px; }
+		.slider-left{ left: 12px; }
+		.slider-right{ right: 12px; }
+	</style>
+	</head>
+	<body>
+	<div class="slider">
+		<a class="slider-left" href="javascript:void(0)"></a>
+		<ul class="slider-img">
+			<li><a href=""><img src="img/1.jpg" alt=""><span>泰国民众疯狂庆祝泼水节11</span></a></li>
+			<li style="display: none;"><a href=""><img src="img/2.jpg" alt=""><span>泰国民众疯狂庆祝泼水节22</span></a></li>
+			<li style="display: none;"><a href=""><img src="img/3.jpg" alt=""><span>泰国民众疯狂庆祝泼水节33</span></a></li>
+			<li style="display: none;"><a href=""><img src="img/4.jpg" alt=""><span>泰国民众疯狂庆祝泼水节44</span></a></li>
+		</ul>
+		<div class="slider-btn">
+			<span class="current"><i></i></span>
+			<span><i></i></span>
+			<span><i></i></span>
+			<span><i></i></span>
+		</div>
+		<a class="slider-right" href="javascript:void(0)"></a>
+	</div>
+	</body>
+	<script>
+		var slider={
+			$$:function(selector){//功能:返回节点结合;selector表示选择器
+				return document.querySelectorAll(selector);
+			},
+			$:function(selector){
+				return document.querySelector(selector);
+			},
+			oldPosFun:function(spanNodes){//功能：得到旧的位置值;spanNodes表示按钮的集合
+				
+					for(var i=0;i<spanNodes.length;i++){
+					if(spanNodes[i].className=="current"){
+						return i;
+					}
+					}
+			},
+			clickFun:function(spanNodes,liNodes){//功能:span点击效果,spanNodes表示按钮的集合，liNodes表示图片的集合			
+				var _this=this;//这个this指slider
+				for(var i=0;i<spanNodes.length;i++){
+					spanNodes[i].index=i;
+					spanNodes[i].onclick=function(){
+						if(this.className=="current"){
+						return;
+					}
+						var curPos=this.index;
+						var oldPos=_this.oldPosFun(spanNodes);
+						_this.nodeSlider(spanNodes,liNodes,curPos,oldPos);
+					}
+					
+					
+				}
+			},
+			nodeSlider:function(spanNodes,liNodes,curPos,oldPos){//功能：进行节点切换，spanNodes表示按钮的集合，liNodes表示图片的集合,curPos当前位置，oldPos之前位置
+				
+					spanNodes[curPos].className="current";
+					spanNodes[oldPos].className="";
+					liNodes[curPos].style.display="";
+					liNodes[oldPos].style.display="none";
+				
+			},
+			leftSlider:function(spanNodes,liNodes,leftNode){//功能：进行节点切换，spanNodes表示按钮的集合
+				var _this=this;
+				leftNode.onclick=function(){
+					var oldPos=_this.oldPosFun(spanNodes);
+					var curPos=oldPos==0?spanNodes.length-1:oldPos-1;
+					_this.nodeSlider(spanNodes,liNodes,curPos,oldPos);
+				}
+			},
+			rightSlider:function(spanNodes,liNodes,rightNode){//功能：进行节点切换，spanNodes表示按钮的集合
+				var _this=this;
+				rightNode.onclick=function(){
+					var oldPos=_this.oldPosFun(spanNodes);
+					var curPos=oldPos==spanNodes.length-1?0:oldPos+1;
+					_this.nodeSlider(spanNodes,liNodes,curPos,oldPos);
+				}
+			},
+			init:function(){//初始化
+				var spanNodes=this.$$(".slider-btn span");
+				var liNodes=this.$$(".slider-img li");
+				var leftNode=this.$(".slider-left");
+				var rightNode=this.$(".slider-right");
+				this.clickFun(spanNodes,liNodes);//调用；this指slider
+				this.leftSlider(spanNodes,liNodes,leftNode);//调用；this指slider
+				this.rightSlider(spanNodes,liNodes,rightNode);//调用；this指slider
+			}
+		};
+		slider.init();//执行初始化
+	</script>
+</html>
